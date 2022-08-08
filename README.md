@@ -1,2 +1,2 @@
-# energy-plus-backend
+# Energy Plus Backend
 
