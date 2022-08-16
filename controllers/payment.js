@@ -10,6 +10,7 @@ export default function initStripeController() {
     try {
       const { customerId } = req.params;
       const customer = await stripe.customers.retrieve(customerId);
+      console.log(customer);
       res.json({
         balance: customer.balance,
       });
@@ -39,39 +40,6 @@ export default function initStripeController() {
     }
   };
 
-  const payment = async (req, res) => {
-    const { customerName } = req.params;
-    let { amount, id, customer } = req.body;
-    try {
-      const payment = await stripe.paymentIntents.create({
-        customer,
-        amount,
-        currency: 'SGD',
-        description: `Wallet Top-Up for ${customerName}`,
-        payment_method: id,
-        confirm: true,
-      });
-      const customerRetrieval = await stripe.customers.retrieve(customer);
-      const customerBalance = await stripe.customers.update(customer, {
-        balance: customerRetrieval.balance + amount,
-      });
-
-      console.log('Payment', payment);
-      res.json({
-        customerId: payment.customer,
-        balance: customerBalance.amount + payment.amount,
-        message: 'Payment successful!',
-        success: true,
-      });
-    } catch (error) {
-      console.log('Error', error);
-      res.json({
-        message: 'Payment failed!',
-        success: false,
-      });
-    }
-  };
-
   const updateCard = async (req, res) => {
     const { customerId } = req.params;
     const { name, cardNumber, month, year, cvc } = req.body;
@@ -88,11 +56,12 @@ export default function initStripeController() {
           cvc: cvc,
         },
       });
-      console.log(paymentMethod);
+      console.log('Creating payment method', paymentMethod);
       const attachCustomer = await stripe.paymentMethods.attach(
         paymentMethod.id,
         { customer: customerId }
       );
+      console.log('Attaching customer', attachCustomer);
       res.json({
         name: attachCustomer.billing_details.name,
         lastFourDigit: attachCustomer.card.last4,
@@ -103,20 +72,24 @@ export default function initStripeController() {
       });
     } catch (error) {
       console.log(error);
+      res.json({
+        message: 'Failed to update card.',
+        success: false,
+      });
     }
   };
 
   const getCard = async (req, res) => {
     const { customerId } = req.params;
-    const paymentMethods = await stripe.paymentMethods.list({
-      customer: customerId,
-      type: 'card',
-    });
-    if (payment.data === undefined) {
-      res.json({
-        message: 'Found no card',
-      });
-    } else {
+    try {
+      const paymentMethods = await stripe.customers.listPaymentMethods(
+        customerId,
+        { type: 'card' }
+      );
+      console.log(paymentMethods);
+      if (!paymentMethods.data[0]) {
+        res.json({ card: false });
+      }
       res.json({
         name: paymentMethods.data[0].billing_details.name,
         card: paymentMethods.data[0].card.last4,
@@ -125,14 +98,55 @@ export default function initStripeController() {
         brand: paymentMethods.data[0].card.brand,
         success: true,
       });
+    } catch (error) {
+      console.log('Error', error);
+    }
+  };
+
+  const retrieveCustomerPaymentMethod = async (req, res) => {
+    const { customerId } = req.params;
+    try {
+      const paymentMethods = await stripe.customers.listPaymentMethods(
+        customerId,
+        { type: 'card' }
+      );
+      res.json({ payment: paymentMethods });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const existingCardPayment = async (req, res) => {
+    const { customer, amount, currency, payment_method } = req.body;
+    try {
+      const createPaymentIntent = await stripe.paymentIntents.create({
+        amount,
+        customer,
+        currency,
+        payment_method,
+        confirm: true,
+      });
+      const customerRetrieval = await stripe.customers.retrieve(customer);
+      const customerBalance = await stripe.customers.update(customer, {
+        balance: customerRetrieval.balance + amount,
+      });
+
+      res.json({
+        balance: customerBalance.balance,
+        message: 'Payment successful',
+        success: true,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return {
     getCustomer,
     createCustomer,
-    payment,
+    existingCardPayment,
     updateCard,
     getCard,
+    retrieveCustomerPaymentMethod,
   };
 }

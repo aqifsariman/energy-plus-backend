@@ -37,9 +37,43 @@ export default function initProfileController(db) {
       res.send(error);
     }
   };
+  const getAvatar = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const avatar = await db.Avatars.findOrCreate({
+        where: {
+          userId: id,
+        },
+      });
+      res.send(avatar);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadAvatar = async (req, res) => {
+    console.log(req.file);
+    const { id } = req.params;
+    try {
+      const avatar = await db.Avatars.update(
+        { photo: req.body.photo, link: req.file.location },
+        {
+          where: {
+            userId: id,
+          },
+        }
+      );
+      res.send(avatar);
+      console.log(avatar);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return {
     findProfileDetails,
     updateDetails,
+    getAvatar,
+    uploadAvatar,
   };
 }

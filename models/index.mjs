@@ -7,11 +7,12 @@ import usersModel from './users.mjs';
 import userDetailsModel from './userDetails.mjs';
 import vehiclesModel from './vehicles.mjs';
 import walletsModel from './wallets.mjs';
+import chargingPointsModel from './chargingPoints.mjs';
+import avatarsModel from './avatar.mjs';
 // import chargingsModel from './chargings.mjs';
 // import locationsModel from './locations.mjs';
 // import notificationsModel from './notifications.mjs';
 // import transactionsModel from './transactions.mjs';
-// import chargingPointsModel from './chargingPoints.mjs';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -52,11 +53,11 @@ db.User = usersModel(sequelize, Sequelize.DataTypes);
 db.UserDetail = userDetailsModel(sequelize, Sequelize.DataTypes);
 db.VehicleDetails = vehiclesModel(sequelize, Sequelize.DataTypes);
 db.Wallet = walletsModel(sequelize, Sequelize.DataTypes);
+db.ChargingPoint = chargingPointsModel(sequelize, Sequelize.DataTypes);
+db.Avatars = avatarsModel(sequelize, Sequelize.DataTypes);
 // db.Charging = chargingsModel(sequelize, Sequelize.DataTypes);
-// db.Location = locationsModel(sequelize, Sequelize.DataTypes);
 // db.Notification = notificationsModel(sequelize, Sequelize.DataTypes);
 // db.Transaction = transactionsModel(sequelize, Sequelize.DataTypes);
-// db.ChargingPoint = chargingPointsModel(sequelize, Sequelize.DataTypes);
 
 db.UserDetail.belongsTo(db.User);
 db.User.hasMany(db.UserDetail);
@@ -67,11 +68,8 @@ db.User.hasMany(db.VehicleDetails);
 db.Wallet.belongsToMany(db.User, { through: 'user_wallet' });
 db.User.hasMany(db.Wallet);
 
-// db.Charging.belongsTo(db.User);
-// db.User.hasMany(db.Charging);
-
-// db.Location.belongsTo(db.User);
-// db.User.hasMany(db.Location);
+db.Avatars.belongsTo(db.User, { through: 'user_avatar' });
+db.User.hasMany(db.Avatars);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
