@@ -45,7 +45,7 @@ const PORT = process.env.PORT || 3004;
 
 const app = express();
 const corsOptions = {
-  origin: 'https://supercharger-8f8ac.web.app/',
+  origin: 'https://supercharger-8f8ac.web.app',
   credentials: true,
 };
 app.use(express.urlencoded({ extended: false }));
