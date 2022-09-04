@@ -10,7 +10,6 @@ export default function initStripeController() {
     try {
       const { customerId } = req.params;
       const customer = await stripe.customers.retrieve(customerId);
-      console.log(customer);
       res.json({
         balance: customer.balance,
       });
@@ -43,6 +42,7 @@ export default function initStripeController() {
   const updateCard = async (req, res) => {
     const { customerId } = req.params;
     const { name, cardNumber, month, year, cvc } = req.body;
+    console.log('Updating card now');
     try {
       const paymentMethod = await stripe.paymentMethods.create({
         type: 'card',
@@ -86,10 +86,10 @@ export default function initStripeController() {
         customerId,
         { type: 'card' }
       );
-      console.log(paymentMethods);
       if (!paymentMethods.data[0]) {
         res.json({ card: false });
       }
+      console.log(paymentMethods);
       res.json({
         name: paymentMethods.data[0].billing_details.name,
         card: paymentMethods.data[0].card.last4,
@@ -130,6 +130,8 @@ export default function initStripeController() {
       const customerBalance = await stripe.customers.update(customer, {
         balance: customerRetrieval.balance + amount,
       });
+
+      console.log(createPaymentIntent);
 
       res.json({
         balance: customerBalance.balance,

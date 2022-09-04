@@ -9,7 +9,7 @@ import vehiclesModel from './vehicles.mjs';
 import walletsModel from './wallets.mjs';
 import chargingPointsModel from './chargingPoints.mjs';
 import avatarsModel from './avatar.mjs';
-// import chargingsModel from './chargings.mjs';
+import chargingsModel from './chargings.mjs';
 // import locationsModel from './locations.mjs';
 // import notificationsModel from './notifications.mjs';
 // import transactionsModel from './transactions.mjs';
@@ -55,7 +55,7 @@ db.VehicleDetails = vehiclesModel(sequelize, Sequelize.DataTypes);
 db.Wallet = walletsModel(sequelize, Sequelize.DataTypes);
 db.ChargingPoint = chargingPointsModel(sequelize, Sequelize.DataTypes);
 db.Avatars = avatarsModel(sequelize, Sequelize.DataTypes);
-// db.Charging = chargingsModel(sequelize, Sequelize.DataTypes);
+db.Charging = chargingsModel(sequelize, Sequelize.DataTypes);
 // db.Notification = notificationsModel(sequelize, Sequelize.DataTypes);
 // db.Transaction = transactionsModel(sequelize, Sequelize.DataTypes);
 
@@ -70,6 +70,9 @@ db.User.hasMany(db.Wallet);
 
 db.Avatars.belongsTo(db.User, { through: 'user_avatar' });
 db.User.hasMany(db.Avatars);
+
+db.Charging.belongsTo(db.User, { through: 'user_charging' });
+db.User.hasMany(db.Charging);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

@@ -53,6 +53,7 @@ app.use(
 );
 app.use(cors());
 app.use(express.static('uploads'));
+
 // AUTHORIZATION
 app.post('/register', UsersController.createUser);
 app.post('/login', UsersController.login);
@@ -63,15 +64,19 @@ app.post(
   multerUpload.single('photo'),
   ProfileController.uploadAvatar
 );
+
 // USER DETAILS CHANGES
 app.get('/profile/:id/get-details', ProfileController.findProfileDetails);
 app.post('/profile/:id/user-details', ProfileController.updateDetails);
+
 // VEHICLES CHANGES
 app.get('/profile/:id/get-vehicles', VehicleController.findVehicleDetails);
 app.post('/profile/:id/user-vehicles', VehicleController.updateVehicleDetails);
+
 // WALLET CHANGES
 app.get('/wallet-details/:id', WalletController.findWalletDetails);
 app.post('/wallet-details/:id', WalletController.updateWalletDetails);
+
 // STRIPE CHANGES
 app.get('/payment/:customerId', StripeController.getCustomer);
 app.post('/payment/customer/:username', StripeController.createCustomer);
@@ -82,7 +87,12 @@ app.get(
   StripeController.retrieveCustomerPaymentMethod
 );
 app.post('/payment-saved-card', StripeController.existingCardPayment);
+
+//CHARGING ACTIVITIES
 app.get('/get-charging-ports', ChargingController.getChargingPorts);
+app.post('/new-charge', ChargingController.newCharge);
+app.get('/charge-info/:userId', ChargingController.chargeInfo);
+app.put('/end-charge', ChargingController.endOfCharge);
 
 // Listening on port
 app.listen(PORT, () => {
