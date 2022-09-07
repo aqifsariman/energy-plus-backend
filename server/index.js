@@ -41,7 +41,7 @@ const ChargingController = initChargingController(db);
 // const LocationsController = initLocationsController(db);
 // const NotificationsController = initNotificationsController(db);
 
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 80;
 
 const app = express();
 const corsOptions = {
