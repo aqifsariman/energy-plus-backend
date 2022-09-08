@@ -2,7 +2,7 @@ const development = {
   username: 'aqifsariman',
   password: null,
   database: 'energy_plus',
-  host: '127.0.0.1',
+  host: 'localhost',
   dialect: 'postgres',
 };
 
