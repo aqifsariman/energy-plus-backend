@@ -35,12 +35,7 @@ let sequelize;
 // const { port } = dbUrl;
 // allConfig.host = host;
 // allConfig.port = port;
-sequelize = new Sequelize(
-  'energy_plus',
-  'postgres',
-  null
-  // allConfig
-);
+sequelize = new Sequelize('energy_plus', 'postgres', null, allConfig);
 // }
 
 // If env is not production, retrieve DB auth details from the allConfig
