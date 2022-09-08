@@ -14,14 +14,14 @@ import chargingsModel from './chargings.mjs';
 // import notificationsModel from './notifications.mjs';
 // import transactionsModel from './transactions.mjs';
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.ENV || 'development';
 
 const db = {};
 let sequelize;
 
 // If env is production, retrieve database auth details from the
 // DATABASE_URL env var that Heroku provides us
-if (env === 'production') {
+if (env === 'PRODUCTION') {
   // // Break apart the Heroku database url and rebuild the configs we need
   // const { DATABASE_URL } = process.env;
   // const dbUrl = url.parse(DATABASE_URL);
@@ -35,7 +35,12 @@ if (env === 'production') {
   // const { port } = dbUrl;
   // allConfig.host = host;
   // allConfig.port = port;
-  sequelize = new Sequelize('energy_plus', 'postgres', null, allConfig);
+  sequelize = new Sequelize(
+    'energy_plus',
+    'postgres',
+    process.env.DB_PASSWORD,
+    allConfig
+  );
 }
 
 // If env is not production, retrieve DB auth details from the allConfig
