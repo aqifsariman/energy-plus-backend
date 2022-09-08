@@ -35,7 +35,7 @@ let sequelize;
 // const { port } = dbUrl;
 // allConfig.host = host;
 // allConfig.port = port;
-sequelize = new Sequelize('energy_plus', 'postgres', 'postgres', {
+sequelize = new Sequelize('energy_plus', 'postgres', process.env.DB_PASSWORD, {
   host: 'localhost',
   dialect: 'postgres',
 });
